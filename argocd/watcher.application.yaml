@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: watcher
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/lipingtababa/SiteUptimeWatcher.git
+    targetRevision: HEAD
+    path: infra/application
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: watcher

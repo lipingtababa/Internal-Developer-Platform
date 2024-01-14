@@ -47,5 +47,3 @@ jobs:
                 -var "stage=${{ inputs.stage }}" \
                 -var "aws_region=${{ env.AWS_REGION }}" \
                 -var "aws_account=${{ env.AWS_ACCOUNT }}"
-
-

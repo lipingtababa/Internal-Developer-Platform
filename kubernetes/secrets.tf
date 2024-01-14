@@ -1,9 +1,15 @@
-provider "aws" {
-  region = "us-east-1"
+resource "aws_secretsmanager_secret" "db_password" {
+  name = "/${var.app_name}/${var.stage}/db-password"
 }
 
-resource "aws_secretsmanager_secret" "postgre" {
-  name = "/watcher/postgre/password"
+resource "random_password" "password" {
+  length  = 16
+  special = true
+}
+
+resource "aws_secretsmanager_secret_version" "db_password_version" {
+  secret_id     = aws_secretsmanager_secret.db_password.id
+  secret_string = random_password.password.result
 }
 
 resource "aws_iam_policy" "secret_reader_policy" {
@@ -18,7 +24,7 @@ resource "aws_iam_policy" "secret_reader_policy" {
       ],
       "Effect": "Allow",
       "Resource": [
-        "${aws_secretsmanager_secret.postgre.arn}"
+        "arn:aws:secretsmanager:${var.aws_region}:${var.aws_account}:secret:/${var.app_name}/${var.stage}/*"
       ]
     }
   ]
@@ -38,7 +44,7 @@ resource "aws_iam_policy" "secret_writer_policy" {
       ],
       "Effect": "Allow",
       "Resource": [
-        "${aws_secretsmanager_secret.postgre.arn}"
+        "arn:aws:secretsmanager:${var.aws_region}:${var.aws_account}:secret:/${var.app_name}/${var.stage}/*"
       ]
     }
   ]

@@ -26,9 +26,14 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/github-actions-admin
           role-session-name: github
           aws-region: ${{ env.AWS_REGION }}
+      - name: Provision shared infrastructure
+        run: |
+          cd resources_shared
+          terraform init
+          terraform apply -auto-approve
 
-      - name: Provision infrastructure
+      - name: Provision per-app-infrastructure
         run: |
             cd resources_per_app
             terraform init
-            terraform plan
+            terraform apply -auto-approve

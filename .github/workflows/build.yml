@@ -14,6 +14,11 @@ jobs:
       - name: Get repo
         uses: actions/checkout@v4
 
+      - name: debug
+        run: |
+            echo arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/github-actions-admin
+            echo ${{ env.AWS_REGION }}
+
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:

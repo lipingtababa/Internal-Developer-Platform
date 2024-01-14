@@ -6,6 +6,7 @@ permissions:
 env:
     AWS_REGION: us-east-1
     IMAGE_TAG: ${{ github.sha }}
+    AWS_ACCOUNT: 339713007259
 on: [push]
 jobs:
   build:

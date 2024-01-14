@@ -1,8 +1,11 @@
-name: Propvision infrastructure for App ${ vars.app_name } in ${ vars.stage }
+name: Provision infrastructure for App ${ vars.app_name } in ${ vars.stage }
 run-name: ${{ github.actor }} is building ${{ github.repository }}
 permissions:
     id-token: write
     contents: read
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT: 339713007259
 on: 
   workflow_call:
     inputs:
@@ -17,7 +20,7 @@ on:
         required: true
         type: string
 jobs:
-  build:
+  provisioning:
     runs-on: ubuntu-latest
     steps:
       - name: Get repo
@@ -25,6 +28,24 @@ jobs:
 
       - name: debug
         run: |
-            ls .
-            echo ${{ github.actor }}
+            echo arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/github-actions-admin
+            echo ${{ env.AWS_REGION }}
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/github-actions-admin
+          role-session-name: github
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Provision per-app-infrastructure
+        run: |
+              cd resources_per_app
+              terraform init 
+              terraform apply -auto-approve \
+                -var "app_name=${{ inputs.app_name }}" \
+                -var "stage=${{ inputs.stage }}" \
+                -var "aws_region=${{ env.AWS_REGION }}" \
+                -var "aws_account=${{ env.AWS_ACCOUNT }}"
+
 

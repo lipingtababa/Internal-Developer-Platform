@@ -1,0 +1,30 @@
+name: Propvision infrastructure for App ${ vars.app_name } in ${ vars.stage }
+run-name: ${{ github.actor }} is building ${{ github.repository }}
+permissions:
+    id-token: write
+    contents: read
+on: 
+  workflow_call:
+    inputs:
+      app_name:
+        description: 'Name of the app'
+        default: 'Hello'
+        required: true
+        type: string
+      stage:
+        description: 'Stage of the app'
+        default: 'dev'
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v4
+
+      - name: debug
+        run: |
+            ls .
+            echo ${{ github.actor }}
+

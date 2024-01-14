@@ -1,0 +1,44 @@
+name: Provision shared infrastructure including kubernetes cluster 
+run-name: ${{ github.actor }} is provisioning ${{ github.repository }}
+permissions:
+    id-token: write
+    contents: read
+on: 
+  workflow_dispatch:
+    inputs:
+      AWS_REGION:
+        description: 'AWS Region'
+        required: true
+        type: string
+      AWS_ACCOUNT:
+        description: 'AWS Account ID'
+        required: true
+        type: string
+      STAGE:
+        description: 'Stage of the app'
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v4
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ inputs.AWS_ACCOUNT }}:role/github-actions-admin
+          role-session-name: github
+          aws-region: ${{ inputs.AWS_REGION }}
+
+      - name: Provision shared infrastructure
+        run: |
+          cd resources_shared
+          terraform init
+          terraform apply -auto-approve \
+                -var "aws_region=${{ inputs.AWS_REGION }}" \
+                -var "aws_account=${{ inputs.AWS_ACCOUNT }}" \
+                -var "stage=${{ inputs.STAGE }}"
+
+      

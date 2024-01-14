@@ -1,5 +1,5 @@
-resource "aws_iam_role" "github_action_role" {
-  name = "github-actions-superuser"
+resource "aws_iam_role" "github_actions_role" {
+  name = "github-actions-admin"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -26,6 +26,6 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "github-actions-superuser-attchment" {
-  role       = aws_iam_role.github_action_role.name
+  role       = aws_iam_role.github_actions_role.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }

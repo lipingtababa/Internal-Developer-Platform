@@ -1,0 +1,29 @@
+name: Build 
+run-name: ${{ github.actor }} is building ${{ github.repository }}
+permissions:
+    id-token: write
+    contents: read
+env:
+    AWS_REGION: us-east-1
+    IMAGE_TAG: ${{ github.sha }}
+    AWS_ACCOUNT: ${{ env.AWS_ACCOUNT }}
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v4
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT }}:role/github-actions-superuser
+          role-session-name: github
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Provision infrastructure
+        run: |
+            cd resources_per_app
+            terraform init
+            terraform plan

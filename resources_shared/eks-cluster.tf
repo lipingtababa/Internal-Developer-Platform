@@ -2,11 +2,16 @@ data "aws_vpc" "default" {
   default = true
 }
 
+variable "aws_vpc_subnet_ids" {
+  type = list(string)
+  default = ["subnet-005a8db3663329ec9", "subnet-085f21f00fe245cda", "subnet-097c8eb90c15f52be"]
+}
+
 resource "aws_eks_cluster" "idp" {
-  name = "idp"
+  name = "shared-idp"
   role_arn = aws_iam_role.idp_node_role.arn
   vpc_config {
-    subnet_ids = ["subnet-005a8db3663329ec9", "subnet-085f21f00fe245cda", "subnet-097c8eb90c15f52be"]
+    subnet_ids = var.aws_vpc_subnet_ids
     security_group_ids = [aws_security_group.cluster_sg.id]
   }
 }
@@ -101,7 +106,7 @@ resource "aws_eks_addon" "eks_addon_proxy" {
   addon_version     = "v1.28.4-eksbuild.4"
 }
 
-resource "aws_eks_addon" "eks_Xaddon_coredns" {
+resource "aws_eks_addon" "eks_addon_coredns" {
   cluster_name      = aws_eks_cluster.idp.name
   addon_name        = "coredns"
   addon_version     = "v1.10.1-eksbuild.6"
@@ -111,7 +116,7 @@ resource "aws_eks_node_group" "idp_node_group" {
   cluster_name    = aws_eks_cluster.idp.name
   node_group_name = "idp_node_group"
   node_role_arn   = aws_iam_role.idp_node_role.arn
-  subnet_ids      = ["subnet-005a8db3663329ec9", "subnet-085f21f00fe245cda", "subnet-097c8eb90c15f52be"]
+  subnet_ids      = var.aws_vpc_subnet_ids
   scaling_config {
     desired_size = 1
     max_size     = 2

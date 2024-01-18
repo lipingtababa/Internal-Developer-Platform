@@ -41,7 +41,8 @@ jobs:
       - name: Provision per-app-infrastructure
         run: |
               cd resources_per_app
-              terraform init 
+              terraform init
+              terraform workspace new ${{ inputs.app_name }}-${{ inputs.stage }} || terraform workspace select ${{ inputs.app_name }}-${{ inputs.stage }}
               terraform apply -auto-approve \
                 -var "app_name=${{ inputs.app_name }}" \
                 -var "stage=${{ inputs.stage }}" \

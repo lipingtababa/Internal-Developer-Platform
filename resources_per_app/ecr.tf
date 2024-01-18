@@ -1,3 +1,3 @@
 resource "aws_ecr_repository" "watcher" {
-  name = "${var.app_name}-${var.stage}"
+  name = "${var.app_name}_${var.stage}"
 }

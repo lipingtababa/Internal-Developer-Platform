@@ -8,7 +8,7 @@ variable "aws_vpc_subnet_ids" {
 }
 
 resource "aws_eks_cluster" "idp" {
-  name = "shared-idp"
+  name = "idp"
   role_arn = aws_iam_role.idp_node_role.arn
   vpc_config {
     subnet_ids = var.aws_vpc_subnet_ids
@@ -17,7 +17,7 @@ resource "aws_eks_cluster" "idp" {
 }
 
 resource "aws_security_group" "cluster_sg" {
-  name = "cluster_sg"
+  name = "cluster_node_sg"
   vpc_id = data.aws_vpc.default.id
 
   ingress {
@@ -50,7 +50,7 @@ resource "aws_security_group" "cluster_sg" {
 }
 
 resource "aws_iam_role" "idp_node_role" {
-  name = "idp_node_role"
+  name = "idp_node_and_management_role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",

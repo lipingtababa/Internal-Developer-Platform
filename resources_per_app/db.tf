@@ -1,5 +1,5 @@
 resource "aws_db_instance" "db" {
-  db_name              = "${var.stage}${var.app_name}"
+  db_name              = "${var.app_name}_${var.stage}"
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"

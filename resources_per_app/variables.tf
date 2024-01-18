@@ -21,3 +21,11 @@ variable "aws_account" {
   description = "AWS account"
   type        = string
 }
+
+terraform {
+  backend "s3" {
+    bucket = "lipingtababa-tf-statefiles"
+    key    = "app/terraform.tfstate"
+    region = "us-east-1"
+  }
+}

@@ -38,7 +38,7 @@ jobs:
             exit 110
           fi
 
-          target_environment=$(head -n 1 changes.txt | cut -c3-)
+          target_environment=$(head -n 1 changes.txt | cut -c2-)
 
           app_name=$(echo $target_environment | cut -d',' -f1)
           stage=$(echo $target_environment | cut -d',' -f2)

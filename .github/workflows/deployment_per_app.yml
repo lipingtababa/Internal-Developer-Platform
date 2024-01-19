@@ -33,16 +33,13 @@ jobs:
           cat changes.txt
           echo "==========="
 
-          # if the diff is not one line, fail the job
           if [ $(wc -l < changes.txt) -ne 1 ]; then
             echo "diff is not one line"
             exit 110
           fi
 
-          # get the app name from the diff
           target_environment=$(head -n 1 changes.txt | cut -c3-)
 
-          $ split the app name into app and stage
           app_name=$(echo $target_environment | cut -d',' -f1)
           stage=$(echo $target_environment | cut -d',' -f2)
 

@@ -38,6 +38,11 @@ jobs:
             exit 1
           fi
 
+          if [ "$operator" == "- " ]; then
+            echo "deletion is not supported yet"
+            exit 0
+          fi
+
           # get the app name from the diff
           target_environment=$(head -n 1 diff.txt | cut -c3-)
 

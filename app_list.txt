@@ -2,3 +2,4 @@ king,production
 emperor,production
 president,production
 queen,production
+killer,production

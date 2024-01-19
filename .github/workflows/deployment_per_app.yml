@@ -27,19 +27,19 @@ jobs:
       - name: Get diff of app_list.txt
         id: get_app_name_and_stage
         run: |
-          git diff HEAD~1 HEAD -- app_list.txt > diff.txt
+          git diff --unified=0 HEAD~1 HEAD -- app_list.txt | grep '^[+-]' | grep -v '^+++'| grep -v '^---' > changes.txt
 
           echo "==========="
-          cat diff.txt
+          cat changes.txt
           echo "==========="
 
           # if the diff is not one line, fail the job
-          if [ $(wc -l < diff.txt) -ne 1 ]; then
+          if [ $(wc -l < changes.txt) -ne 1 ]; then
             echo "diff is not one line"
             exit 1
           fi
 
-          operator=$(head -c 1 diff.txt)$(head -n 1 diff.txt | cut -c1)
+          operator=$(head -c 1 changes.txt)$(head -n 1 changes.txt | cut -c1)
           if [ "$operator" != "+ " ] && [ "$operator" != "- " ]; then
             echo "diff does not start with + or -"
             exit 1
@@ -51,7 +51,7 @@ jobs:
           fi
 
           # get the app name from the diff
-          target_environment=$(head -n 1 diff.txt | cut -c3-)
+          target_environment=$(head -n 1 changes.txt | cut -c3-)
 
           $ split the app name into app and stage
           app_name=$(echo $target_environment | cut -d',' -f1)

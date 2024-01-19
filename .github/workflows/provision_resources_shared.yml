@@ -1,4 +1,4 @@
-name: Provision shared infrastructures, including kubernetes cluster 
+name: Provision shared infrastructures
 run-name: ${{ github.actor }} is provisioning ${{ github.repository }}
 permissions:
     id-token: write

@@ -1,0 +1,48 @@
+name: Deployment of App
+run-name: Deployment of App ${ vars.app_name }-${ vars.stage }
+permissions:
+    id-token: write
+    contents: read
+
+on:
+  pull_request:
+    paths:
+      - 'app_list.txt'
+
+jobs:
+  get-name-and-stage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v4
+
+      - name: Get diff for app_list.txt
+        run: |
+          git diff ${{ github.base_ref }}...${{ github.head_ref }} -- app_list.txt > diff.txt
+
+          # if the diff is not one line, fail the job
+          if [ $(wc -l < diff.txt) -ne 1 ]; then
+            echo "diff is not one line"
+            exit 1
+          fi
+
+          operator=$(head -c 1 diff.txt)$(head -n 1 diff.txt | cut -c1)
+          if [ "$operator" != "+ " ] && [ "$operator" != "- " ]; then
+            echo "diff does not start with + or -"
+            exit 1
+          fi
+
+          # get the app name from the diff
+          target_environment=$(head -n 1 diff.txt | cut -c3-)
+
+          $ split the app name into app and stage
+          app_name=$(echo $target_environment | cut -d',' -f1)
+          stage=$(echo $target_environment | cut -d',' -f2)
+          echo "app_name=${app_name}" >> $GITHUB_ENV
+          echo "stage=${stage}" >> $GITHUB_ENV
+
+      - name: Provision infrastructure for app
+        uses: lipingtababa/Internal-Developer-Platform/.github/workflows/provision_resources_per_app.yml@main
+        with:
+            app_name : ${{ env.app_name }}
+            stage : ${{ env.stage }}

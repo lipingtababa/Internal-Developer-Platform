@@ -10,6 +10,7 @@ on:
       - main
     paths:
       - 'app_list.txt'
+      - '.github/workflows/deployment_per_app.yml'
 
 jobs:
   prepare:
@@ -24,7 +25,7 @@ jobs:
       - name: Get diff of app_list.txt
         id: get_app_name_and_stage
         run: |
-          git diff ${{ github.base_ref }}...${{ github.head_ref }} -- app_list.txt > diff.txt
+          git diff HEAD~1 HEAD -- app_list.txt > diff.txt
 
           echo "==========="
           cat diff.txt

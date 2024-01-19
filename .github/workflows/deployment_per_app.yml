@@ -1,5 +1,5 @@
 name: Deployment of App
-run-name: Deployment of App ${ vars.app_name }-${ vars.stage }
+run-name: ${{ github.actor }} is provisioning ${{ github.repository }}
 permissions:
     id-token: write
     contents: read
@@ -25,6 +25,10 @@ jobs:
         id: get_app_name_and_stage
         run: |
           git diff ${{ github.base_ref }}...${{ github.head_ref }} -- app_list.txt > diff.txt
+
+          echo "==========="
+          cat diff.txt
+          echo "==========="
 
           # if the diff is not one line, fail the job
           if [ $(wc -l < diff.txt) -ne 1 ]; then

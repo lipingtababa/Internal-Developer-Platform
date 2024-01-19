@@ -5,9 +5,7 @@ permissions:
     contents: read
 
 on:
-  pull_request:
-    paths:
-      - 'app_list.txt'
+  pull_request
 
 jobs:
   prepare:

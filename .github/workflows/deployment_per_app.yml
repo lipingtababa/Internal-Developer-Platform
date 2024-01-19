@@ -5,7 +5,11 @@ permissions:
     contents: read
 
 on:
-  pull_request
+  push:
+    branches:
+      - main
+    paths:
+      - 'app_list.txt'
 
 jobs:
   prepare:

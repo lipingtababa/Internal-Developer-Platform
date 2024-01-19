@@ -47,11 +47,8 @@ jobs:
           echo "::set-output name=stage::$(echo ${stage})"
 
   deploy-app:
-    runs-on: ubuntu-latest
-    needs: prepare
-    steps:
-      - name: Provision infrastructure for app
-        uses: lipingtababa/Internal-Developer-Platform/.github/workflows/provision_resources_per_app.yml@main
-        with:
-            app_name : ${{ needs.prepare.outputs.app_name }}
-            stage : ${{ needs.prepare.outputs.stage }}
+    needs: [prepare]
+    uses: lipingtababa/Internal-Developer-Platform/.github/workflows/provision_resources_per_app.yml@main
+    with:
+      app_name : ${{ needs.prepare.outputs.app_name }}
+      stage : ${{ needs.prepare.outputs.stage }}

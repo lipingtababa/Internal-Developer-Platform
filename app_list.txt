@@ -1,1 +1,2 @@
 king,production
+queen,production

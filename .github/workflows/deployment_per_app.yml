@@ -36,18 +36,7 @@ jobs:
           # if the diff is not one line, fail the job
           if [ $(wc -l < changes.txt) -ne 1 ]; then
             echo "diff is not one line"
-            exit 1
-          fi
-
-          operator=$(head -c 1 changes.txt)$(head -n 1 changes.txt | cut -c1)
-          if [ "$operator" != "+ " ] && [ "$operator" != "- " ]; then
-            echo "diff does not start with + or -"
-            exit 1
-          fi
-
-          if [ "$operator" == "- " ]; then
-            echo "deletion is not supported yet"
-            exit 0
+            exit 110
           fi
 
           # get the app name from the diff

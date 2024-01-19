@@ -1,5 +1,5 @@
-name: Provision infrastructure for App ${ vars.app_name } in ${ vars.stage }
-run-name: ${{ github.actor }} is building ${{ github.repository }}
+name: Provision infrastructure for App 
+run-name: Provision infrastructure for App ${ vars.app_name } in ${ vars.stage }
 permissions:
     id-token: write
     contents: read

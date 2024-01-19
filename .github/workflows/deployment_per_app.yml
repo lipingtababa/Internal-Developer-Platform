@@ -10,13 +10,17 @@ on:
       - 'app_list.txt'
 
 jobs:
-  get-name-and-stage:
+  prepare:
     runs-on: ubuntu-latest
+    outputs:
+        app_name: ${{ steps.get_app_name_and_stage.outputs.app_name }}
+        stage: ${{ steps.get_app_name_and_stage.outputs.stage }}
     steps:
       - name: Get repo
         uses: actions/checkout@v4
 
-      - name: Get diff for app_list.txt
+      - name: Get diff of app_list.txt
+        id: get_app_name_and_stage
         run: |
           git diff ${{ github.base_ref }}...${{ github.head_ref }} -- app_list.txt > diff.txt
 
@@ -38,11 +42,16 @@ jobs:
           $ split the app name into app and stage
           app_name=$(echo $target_environment | cut -d',' -f1)
           stage=$(echo $target_environment | cut -d',' -f2)
-          echo "app_name=${app_name}" >> $GITHUB_ENV
-          echo "stage=${stage}" >> $GITHUB_ENV
 
+          echo "::set-output name=app_name::$(echo ${app_name})"
+          echo "::set-output name=stage::$(echo ${stage})"
+
+  deploy-app:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
       - name: Provision infrastructure for app
         uses: lipingtababa/Internal-Developer-Platform/.github/workflows/provision_resources_per_app.yml@main
         with:
-            app_name : ${{ env.app_name }}
-            stage : ${{ env.stage }}
+            app_name : ${{ needs.prepare.outputs.app_name }}
+            stage : ${{ needs.prepare.outputs.stage }}
